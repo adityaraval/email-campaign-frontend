@@ -1,25 +1,32 @@
 import React from 'react';
-import logo from './logo.svg';
+import { ToastContainer } from 'react-toastify';
+
+import { Row, Col, Container } from 'react-bootstrap';
+import CampaignForm from './components/CampaignForm';
+
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container fluid>
+      <Row>
+        <Col md={12}>
+          <CampaignForm />
+        </Col>
+      </Row>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={2000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </Container>
   );
 }
 
