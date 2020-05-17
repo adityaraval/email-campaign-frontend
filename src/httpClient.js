@@ -15,8 +15,6 @@ const toastError = (messageToShow) => {
 
 export const createCampaign = async (object) => {
   try {
-    const customers = object.customers.split(',');
-    object.customers = customers;
     const response = await instance.post('/campaigns', object);
     if (response.status === 200) {
       toastSuccess(response.data.message);

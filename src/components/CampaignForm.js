@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Row, Col, Form } from 'react-bootstrap';
+import CsvParse from '@vtex/react-csv-parse';
 
 import {
   FormControl,
@@ -14,6 +15,13 @@ import Header from './Header';
 
 import { initialValues, validationSchema } from './schema';
 import { createCampaign } from '../httpClient';
+
+// csv file keys
+const csvKeys = [
+  'email',
+  'name',
+  'subject',
+];
 
 const CampaignForm = () => (
   <>
@@ -33,7 +41,7 @@ const CampaignForm = () => (
           console.log(values);
           setSubmitting(true);
           setTimeout(async () => {
-            alert(JSON.stringify(values, null, 2));
+            // alert(JSON.stringify(values, null, 2));
             await createCampaign(values);
             resetForm();
             setSubmitting(false);
@@ -147,7 +155,7 @@ const CampaignForm = () => (
                     minDate={new Date()}
                     showTimeSelect
                     timeFormat="HH:mm"
-                    timeIntervals={15}
+                    timeIntervals={2}
                     timeCaption="time"
                     dateFormat="MMMM d, yyyy h:mm aa"
                     className={touched.startDate && errors.startDate ? 'error form-control' : 'form-control'}
@@ -167,7 +175,7 @@ const CampaignForm = () => (
                     onChange={(date) => setFieldValue('endDate', date)}
                     showTimeSelect
                     timeFormat="HH:mm"
-                    timeIntervals={15}
+                    timeIntervals={2}
                     timeCaption="time"
                     dateFormat="MMMM d, yyyy h:mm aa"
                     className={touched.endDate && errors.endDate ? 'error form-control' : 'form-control'}
@@ -179,26 +187,6 @@ const CampaignForm = () => (
               </Col>
             </Row>
             <Row>
-              <Col>
-                <Form.Group controlId="customers">
-                  <FormLabel>
-                    Customers emails comma separated :
-                  </FormLabel>
-                  <FormControl
-                    type="text"
-                    name="customers"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.customers}
-                    className={touched.customers
-                        && errors.customers ? 'error' : null}
-                  />
-                  {touched.customers
-                      && errors.customers ? (
-                        <div className="error-message">{errors.customers}</div>
-                    ) : null}
-                </Form.Group>
-              </Col>
               <Col>
                 <Form.Group controlId="body">
                   <FormLabel>
@@ -219,6 +207,67 @@ const CampaignForm = () => (
                     ) : null}
                 </Form.Group>
 
+              </Col>
+              <Col>
+                <Form.Group controlId="customers">
+                  <FormLabel>
+                    Upload csv file in this format ::: name,email,subjet  (subject can be personalized):
+                  </FormLabel>
+                  <CsvParse
+                    keys={csvKeys}
+                    onDataUploaded={(data) => {
+                      setFieldValue('customers', data);
+                      console.log(data);
+                    }}
+                    onError={console.log}
+                    render={
+                      (onChange) => (
+                        <FormControl
+                          className={touched.customers
+                        && errors.customers ? 'error' : null}
+                          type="file"
+                          onChange={onChange}
+                        />
+                      )
+                      }
+                  />
+                  {/* {touched.customers
+                      && errors.customers ? (
+                        <div className="error-message">{errors.customers}</div>
+                    ) : null} */}
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col>
+                <Form.Group controlId="html">
+                  <FormLabel>
+                    HTML Template text with customName,body and unsubscribeUrl
+                    <a
+                      href="https://notepad.pw/sendgrid-template-html"
+                      target="_blank"
+                    >
+                      Use html template from here
+                    </a>
+                  </FormLabel>
+                  <Form.Control
+                    as="textarea"
+                    rows="3"
+                    cols="10"
+                    name="html"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.html}
+                    className={touched.html
+                        && errors.html ? 'error' : null}
+                  />
+                  {touched.html
+                      && errors.html ? (
+                        <div className="error-message">{errors.html}</div>
+                    ) : null}
+
+                </Form.Group>
               </Col>
             </Row>
             <SubmitButton
